@@ -39,14 +39,47 @@ function computeTransforms(container: ContainerBox, fitRule: FitRule, naturalSiz
 
     const contentScalingFactor = 1 / Math.min(outerWidthFactor, outerHeightFactor)
 
-    const innerWidthFactor = 1 / outerWidthFactor
-    const innerHeightFactor = 1 / outerHeightFactor
     const outerScale: Scale = {
       widthFactor: outerWidthFactor,
       heightFactor: outerHeightFactor
     }
     const outerTranslation: Translation = { x: container.x, y: container.y }
 
+    const innerWidthFactor = 1 / outerWidthFactor
+    const innerHeightFactor = 1 / outerHeightFactor
+    const innerScale: Scale = {
+      widthFactor: innerWidthFactor / contentScalingFactor,
+      heightFactor: innerHeightFactor / contentScalingFactor
+    }
+
+    const innerTranslation: Translation = {
+      x: (container.width - naturalSize.width / contentScalingFactor) * innerWidthFactor / 2,
+      y: (container.height - naturalSize.height / contentScalingFactor) * innerHeightFactor / 2
+    }
+
+    return {
+      outerScale,
+      outerTranslation,
+      innerScale,
+      innerTranslation,
+      contentScalingFactor
+    }
+  }
+
+  if (fitRule === 'cover') {
+    const outerWidthFactor = container.width / naturalSize.width
+    const outerHeightFactor = container.height / naturalSize.height
+
+    const contentScalingFactor = 1 / Math.max(outerWidthFactor, outerHeightFactor)
+
+    const outerScale: Scale = {
+      widthFactor: outerWidthFactor,
+      heightFactor: outerHeightFactor
+    }
+    const outerTranslation: Translation = { x: container.x, y: container.y }
+
+    const innerWidthFactor = 1 / outerWidthFactor
+    const innerHeightFactor = 1 / outerHeightFactor
     const innerScale: Scale = {
       widthFactor: innerWidthFactor / contentScalingFactor,
       heightFactor: innerHeightFactor / contentScalingFactor
@@ -118,7 +151,8 @@ function RectToRectTransition({
 
   const outerStyles: React.CSSProperties = {
     ...commonStyles,
-    transform: `translate3d(${outerTranslation.x}px, ${outerTranslation.y}px, 0) scale3d(${outerScale.widthFactor}, ${outerScale.heightFactor}, 1)`
+    transform: `translate3d(${outerTranslation.x}px, ${outerTranslation.y}px, 0) scale3d(${outerScale.widthFactor}, ${outerScale.heightFactor}, 1)`,
+    overflow: 'hidden'
   }
 
   const innerStyles: React.CSSProperties = {

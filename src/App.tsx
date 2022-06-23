@@ -13,12 +13,12 @@ function App() {
       <RectToRectTransition
         activeContainer={activeContainer}
         smallContainer={smallContainer}
-        smallFitRule="contain"
+        smallFitRule="cover"
         largeContainer={largeContainer}
         largeFitRule="contain"
         duration={1000}
         naturalSize={{ width: 400, height: 200 }}
-        renderContent={(contentScalingFactor) => {
+        renderContent={(contentScalingFactor: number) => {
           return (
             <div
               style={{ width: '100%', height: '100%', backgroundColor: 'blue' }}
