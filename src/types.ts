@@ -23,11 +23,3 @@ export type ContainerBox = {
 export type ContainerSize = 'small' | 'large'
 
 export type FitRule = 'contain' | 'cover'
-
-export type Transforms = {
-  outerScale: Scale,
-  outerTranslation: Translation,
-  innerScale: Scale,
-  innerTranslation: Translation,
-  contentScalingFactor: number
-}

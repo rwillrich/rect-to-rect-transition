@@ -1,7 +1,6 @@
 import { ContainerBox, FitRule, Size, ContainerSize } from './types.ts'
 import { computeTransforms, transforms } from './transform-helpers.ts'
 
-
 export type RectToRectTransitionProps = {
   activeContainer: ContainerSize,
   smallContainer: ContainerBox,
@@ -31,7 +30,7 @@ function RectToRectTransition({
     outerTranslation,
     innerScale,
     innerTranslation,
-    contentScalingFactor
+    scalingFactorCompensation
   } = computeTransforms(container, fitRule, naturalSize)
 
   const commonStyles: React.CSSProperties = {
@@ -57,7 +56,7 @@ function RectToRectTransition({
   return (
     <div style={outerStyles}>
       <div style={innerStyles}>
-        {renderContent(contentScalingFactor)}
+        {renderContent(scalingFactorCompensation)}
       </div>
     </div>
   )

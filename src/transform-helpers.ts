@@ -1,11 +1,20 @@
-import { ContainerBox, FitRule, Size, Transforms, Scale, Translation } from './types.ts'
+import { ContainerBox, FitRule, Size, Scale, Translation } from './types.ts'
+
+export type Transforms = {
+  outerScale: Scale,
+  outerTranslation: Translation,
+  innerScale: Scale,
+  innerTranslation: Translation,
+  scalingFactorCompensation: number
+}
 
 export function computeTransforms(container: ContainerBox, fitRule: FitRule, naturalSize: Size): Transforms {
   const outerWidthFactor = container.width / naturalSize.width
   const outerHeightFactor = container.height / naturalSize.height
 
   const scalingFactorSelector = fitRule === 'cover' ? Math.max : Math.min
-  const contentScalingFactor = 1 / scalingFactorSelector(outerWidthFactor, outerHeightFactor)
+  const contentScalingFactor = scalingFactorSelector(outerWidthFactor, outerHeightFactor)
+  const scalingFactorCompensation = 1 / contentScalingFactor
 
   const outerScale: Scale = {
     widthFactor: outerWidthFactor,
@@ -16,12 +25,12 @@ export function computeTransforms(container: ContainerBox, fitRule: FitRule, nat
   const innerWidthFactor = 1 / outerWidthFactor
   const innerHeightFactor = 1 / outerHeightFactor
   const innerScale: Scale = {
-    widthFactor: innerWidthFactor / contentScalingFactor,
-    heightFactor: innerHeightFactor / contentScalingFactor
+    widthFactor: innerWidthFactor / scalingFactorCompensation,
+    heightFactor: innerHeightFactor / scalingFactorCompensation
   }
 
-  const normalizedWidth = naturalSize.width / contentScalingFactor
-  const normalizedHeight = naturalSize.height / contentScalingFactor
+  const normalizedWidth = naturalSize.width / scalingFactorCompensation
+  const normalizedHeight = naturalSize.height / scalingFactorCompensation
 
   const innerTranslation: Translation = {
     x: (container.width - normalizedWidth) * innerWidthFactor / 2,
@@ -33,7 +42,8 @@ export function computeTransforms(container: ContainerBox, fitRule: FitRule, nat
     outerTranslation,
     innerScale,
     innerTranslation,
-    contentScalingFactor
+    // This is needed for keeping something the same size in the content
+    scalingFactorCompensation
   }
 }
 

@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import RectToRectTransition, { ContainerSize } from './RectToRectTransition.tsx';
+import RectToRectTransition, { ContainerSize } from './RectToRectTransition.tsx'
+import './App.css'
 
 function App() {
   const [activeContainer, setActiveContainer] = useState<ContainerSize>('small')
@@ -8,18 +9,22 @@ function App() {
 
   return (
     <div style={{ position: 'relative' }}>
-      <div style={{
-        left: smallContainer.x,
-        top: smallContainer.y,
-        width: smallContainer.width,
-        height: smallContainer.height
-      }} />
-      <div style={{
-        left: largeContainer.x,
-        top: largeContainer.y,
-        width: largeContainer.width,
-        height: largeContainer.height
-      }} />
+      <div
+        className='App__container'
+        style={{
+          left: smallContainer.x,
+          top: smallContainer.y,
+          width: smallContainer.width,
+          height: smallContainer.height
+        }} />
+      <div
+        className='App__container'
+        style={{
+          left: largeContainer.x,
+          top: largeContainer.y,
+          width: largeContainer.width,
+          height: largeContainer.height
+        }} />
       <RectToRectTransition
         activeContainer={activeContainer}
         smallContainer={smallContainer}
@@ -28,7 +33,7 @@ function App() {
         largeFitRule="contain"
         duration={600}
         naturalSize={{ width: 400, height: 200 }}
-        renderContent={(contentScalingFactor: number) => {
+        renderContent={(scalingFactorCompensation: number) => {
           return (
             <>
               <img
@@ -44,7 +49,7 @@ function App() {
                   transitionDuration: '600ms',
                   transitionProperty: 'transform',
                   transitionTimingFunction: 'linear',
-                  transform: `scale3d(${contentScalingFactor}, ${contentScalingFactor}, 1)`
+                  transform: `scale3d(${scalingFactorCompensation}, ${scalingFactorCompensation}, 1)`
                 }} />
             </>
           )
