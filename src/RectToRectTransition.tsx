@@ -28,7 +28,8 @@ export type Transforms = {
   outerScale: Scale,
   outerTranslation: Translation,
   innerScale: Scale,
-  innerTranslation: Translation
+  innerTranslation: Translation,
+  contentScalingFactor: number
 }
 
 function computeTransforms(container: ContainerBox, fitRule: FitRule, naturalSize: Size): Transforms {
@@ -36,7 +37,7 @@ function computeTransforms(container: ContainerBox, fitRule: FitRule, naturalSiz
     const outerWidthFactor = container.width / naturalSize.width
     const outerHeightFactor = container.height / naturalSize.height
 
-    const overallScalingFactor = 1 / Math.min(outerWidthFactor, outerHeightFactor)
+    const contentScalingFactor = 1 / Math.min(outerWidthFactor, outerHeightFactor)
 
     const innerWidthFactor = 1 / outerWidthFactor
     const innerHeightFactor = 1 / outerHeightFactor
@@ -47,20 +48,21 @@ function computeTransforms(container: ContainerBox, fitRule: FitRule, naturalSiz
     const outerTranslation: Translation = { x: container.x, y: container.y }
 
     const innerScale: Scale = {
-      widthFactor: innerWidthFactor / overallScalingFactor,
-      heightFactor: innerHeightFactor / overallScalingFactor
+      widthFactor: innerWidthFactor / contentScalingFactor,
+      heightFactor: innerHeightFactor / contentScalingFactor
     }
 
     const innerTranslation: Translation = {
-      x: (container.width - naturalSize.width / overallScalingFactor) * innerWidthFactor / 2,
-      y: (container.height - naturalSize.height / overallScalingFactor) * innerHeightFactor / 2
+      x: (container.width - naturalSize.width / contentScalingFactor) * innerWidthFactor / 2,
+      y: (container.height - naturalSize.height / contentScalingFactor) * innerHeightFactor / 2
     }
 
     return {
       outerScale,
       outerTranslation,
       innerScale,
-      innerTranslation
+      innerTranslation,
+      contentScalingFactor
     }
   }
 
@@ -68,7 +70,8 @@ function computeTransforms(container: ContainerBox, fitRule: FitRule, naturalSiz
     outerScale: { widthFactor: 1, heightFactor: 1 },
     outerTranslation: { x: 1, y: 1 },
     innerScale: { widthFactor: 1, heightFactor: 1 },
-    innerTranslation: { x: 0, y: 0 }
+    innerTranslation: { x: 0, y: 0 },
+    contentScalingFactor: 1
   }
 }
 
@@ -80,7 +83,7 @@ export type RectToRectTransitionProps = {
   smallFitRule: FitRule,
   largeFitRule: FitRule,
   duration: number,
-  renderContent: () => React.ReactNode
+  renderContent: (contentScalingFactor: number) => React.ReactNode
 }
 
 function RectToRectTransition({
@@ -100,13 +103,14 @@ function RectToRectTransition({
     outerScale,
     outerTranslation,
     innerScale,
-    innerTranslation
+    innerTranslation,
+    contentScalingFactor
   } = computeTransforms(container, fitRule, naturalSize)
 
   const commonStyles: React.CSSProperties = {
     transitionProperty: 'transform',
     transitionDuration: `${duration}ms`,
-    transitionTimingFunction: 'ease-in-out',
+    transitionTimingFunction: 'linear',
     transformOrigin: 'left top',
     width: naturalSize.width,
     height: naturalSize.height,
@@ -125,7 +129,7 @@ function RectToRectTransition({
   return (
     <div style={outerStyles}>
       <div style={innerStyles}>
-        {renderContent()}
+        {renderContent(contentScalingFactor)}
       </div>
     </div>
   )

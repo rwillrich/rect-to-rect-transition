@@ -18,13 +18,29 @@ function App() {
         largeFitRule="contain"
         duration={1000}
         naturalSize={{ width: 400, height: 200 }}
-        renderContent={() => {
+        renderContent={(contentScalingFactor) => {
           return (
             <div
               style={{ width: '100%', height: '100%', backgroundColor: 'blue' }}
               onClick={() => {
                 setActiveContainer(activeContainer === "small" ? "large" : "small")
+              }}>
+              <div style={{
+                position: 'absolute',
+                left: '200px',
+                top: '100px',
+                width: 0,
+                height: 0,
+                backgroundColor: 'white',
+                border: '8px solid white',
+                borderRadius: '8px',
+                boxShadow: '0 0 0 4px rgba(255, 255, 255, 0.5)',
+                transitionDuration: '1000ms',
+                transitionProperty: 'transform',
+                transitionTimingFunction: 'linear',
+                transform: `scale3d(${contentScalingFactor}, ${contentScalingFactor}, 1)`
               }} />
+            </div>
           )
         }} />
     </div>
